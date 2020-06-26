@@ -36,6 +36,8 @@ MapToTable::MapToTable()
 
     scols_table_new_column(this->tb, "KEY",   2, SCOLS_FL_WRAP);
     scols_table_new_column(this->tb, "VALUE", 2, SCOLS_FL_WRAP);
+    scols_table_enable_noheadings(this->tb, 1);
+    scols_table_set_column_separator(this->tb, " : ");
 }
 
 struct libscols_line *
@@ -45,7 +47,6 @@ MapToTable::add(std::string key, std::string value)
     scols_line_set_data(ln, COL_KEY, key.c_str());
     scols_line_set_data(ln, COL_VALUE, value.c_str());
     return ln;
-
 }
 
 void
@@ -60,8 +61,10 @@ int main() {
     MapToTable mtt;
     mtt.add("name", "bash");
     mtt.add("version", "5.0.11");
+    mtt.add("","");
     mtt.add("name", "wget");
     mtt.add("version", "1.20.3");
+    mtt.add("modularitylabel", "2");
 
     mtt.print();
 }
