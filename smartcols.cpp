@@ -17,7 +17,10 @@ class MapToTable {
 private:
     listpkgmap listPkgMap;
     Table t;
+    struct libscols_table * tb;
+    struct libscols_line  * l1, * l2, * l3;
 
+    enum { COL_NAME, COL_VERSION, COL_ARCH };
 public:
     MapToTable(listpkgmap);
     MapToTable(std::string, std::string, std::string);
@@ -26,12 +29,14 @@ public:
     void print_table();
 };
 
-MapToTable::MapToTable(listpkgmap listPkgMap)
-    : listPkgMap(listPkgMap)
-{}
-
 MapToTable::MapToTable(std::string name, std::string version, std::string arch)
 {
+    setlocale(LC_ALL, "");
+    this->tb = scols_new_table();
+
+    scols_table_new_column(this->tb, "NAME", 0.1, SCOLS_FL_WRAP);
+    scols_table_new_column(this->tb, "VERSION",     2, SCOLS_FL_RIGHT);
+    scols_table_new_column(this->tb, "ARCH",        2, SCOLS_FL_RIGHT);
     this->add(name, version, arch);
 }
 
@@ -43,6 +48,12 @@ MapToTable::add(std::string name, std::string version, std::string arch)
     map["version"] = version;
     map["arch"] = arch;
     this->listPkgMap.push_back(map);
+
+    this->l1 = scols_table_new_line(this->tb, l1);
+    scols_line_set_data(l1, COL_NAME, name.c_str());
+    scols_line_set_data(l1, COL_VERSION, version.c_str());
+    scols_line_set_data(l1, COL_ARCH, arch.c_str());
+
 }
 
 void
@@ -54,6 +65,8 @@ MapToTable::print()
         printf("%s\t: %s\n", "Arch", std::get<std::string>(el.at("arch")).c_str());
         printf("\n");
     }
+    scols_print_table(tb);
+    scols_unref_table(tb);
 }
 
 int main() {
