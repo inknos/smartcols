@@ -33,9 +33,9 @@ MapToTable::MapToTable(std::string name, std::string version, std::string arch)
     setlocale(LC_ALL, "");
     this->tb = scols_new_table();
 
-    scols_table_new_column(this->tb, "NAME", 2, SCOLS_FL_RIGHT);
-    scols_table_new_column(this->tb, "VERSION",     2, SCOLS_FL_RIGHT);
-    scols_table_new_column(this->tb, "ARCH",        2, SCOLS_FL_RIGHT);
+    scols_table_new_column(this->tb, "NAME",     2, SCOLS_FL_WRAP);
+    scols_table_new_column(this->tb, "VERSION",  2, SCOLS_FL_RIGHT);
+    scols_table_new_column(this->tb, "ARCH",     2, SCOLS_FL_RIGHT);
     this->add(name, version, arch);
 }
 
