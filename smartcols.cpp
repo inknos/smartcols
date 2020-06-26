@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iostream>
 #include <map>
 #include <string>
 #include <stdio.h>
@@ -56,16 +57,25 @@ MapToTable::print()
 }
 
 int main() {
-    listpkgmap listPkgMap;
+    listpkgmap listPkgMap = { // vector
+        { // map
+            { "name", "bash" },
+            { "version", "1.1.1"}
+        },
+        {
+            { "name", "wget" },
+            { "version", "2.2.2"}
+        }
+    };
 
-    MapToTable mtt;
-    mtt.add("name", "bash");
-    mtt.add("version", "5.0.11");
-    mtt.add("","");
-    mtt.add("name", "wget");
-    mtt.add("version", "1.20.3");
-    mtt.add("modularitylabel", "2");
+    for ( auto it = listPkgMap.begin(); it != listPkgMap.end(); it++ ) {
+        MapToTable mtt;
+        auto pkg = *it;
+        mtt.add("name", std::get<std::string>(pkg["name"]));
+        mtt.add("version", std::get<std::string>(pkg["version"]));
+        mtt.print();
+        if ( std::next(it) != listPkgMap.end() ) { std::cout << std::endl; }
+    }
 
-    mtt.print();
 }
 
