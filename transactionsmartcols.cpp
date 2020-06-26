@@ -72,6 +72,7 @@ int main() {
 
     struct libscols_table * tb;
     struct libscols_line  * ln, * in_ln, * rm_ln;
+    struct libscols_symbols * sy = scols_new_symbols ();
     enum { COL_NAME, COL_VERSION, COL_ARCH };
     setlocale(LC_ALL, "");
 
@@ -80,6 +81,11 @@ int main() {
     scols_table_new_column(tb, "Version",      0.3, SCOLS_FL_WRAP);
     scols_table_new_column(tb, "Architecture", 0.3, SCOLS_FL_WRAP);
     scols_table_enable_maxout (tb, 1);
+    scols_symbols_set_branch(sy, "  ");
+    scols_symbols_set_right(sy, "  ");
+    scols_symbols_set_vertical(sy, "");
+    scols_table_set_symbols (tb, sy);
+
 
     auto in_list = mlpm["install"];
     auto rm_list = mlpm["remove"];
