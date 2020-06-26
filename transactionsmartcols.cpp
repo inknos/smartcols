@@ -71,7 +71,7 @@ int main() {
     };
 
     struct libscols_table * tb;
-    struct libscols_line  * ln, * in_ln;
+    struct libscols_line  * ln, * in_ln, * rm_ln;
     enum { COL_NAME, COL_VERSION, COL_ARCH };
     setlocale(LC_ALL, "");
 
@@ -79,19 +79,46 @@ int main() {
     scols_table_new_column(tb, "Package",      0.4, SCOLS_FL_TREE);
     scols_table_new_column(tb, "Version",      0.3, SCOLS_FL_WRAP);
     scols_table_new_column(tb, "Architecture", 0.3, SCOLS_FL_WRAP);
+    scols_table_enable_maxout (tb, 1);
 
-    auto in_list = mlpm[0];
+    auto in_list = mlpm["install"];
+    auto rm_list = mlpm["remove"];
 
+    /*
+     * Installing
+     * */
     ln = in_ln = scols_table_new_line(tb, NULL);
-    scols_line_set_data(in_ln, COL_NAME, "Installing");
+    scols_line_set_data(ln, COL_NAME, "Installing");
+    scols_line_set_data(ln, COL_VERSION, "");
+    scols_line_set_data(ln, COL_ARCH, "");
 
     for ( auto it = in_list.begin(); it != in_list.end(); it++) {
         auto map = *it;
-        ln = scols_table_new_line(tb, ln);
+        ln = scols_table_new_line(tb, in_ln);
 
         scols_line_set_data(ln, COL_NAME, std::get<std::string>(map["name"]).c_str());
-        scols_line_set_data(ln, COL_VERSION, std::get<std::string>(map["name"]).c_str());
-        scols_line_set_data(ln, COL_ARCH, std::get<std::string>(map["name"]).c_str());
+        scols_line_set_data(ln, COL_VERSION, std::get<std::string>(map["version"]).c_str());
+        scols_line_set_data(ln, COL_ARCH, std::get<std::string>(map["arch"]).c_str());
+    }
+
+    ln = scols_table_new_line(tb, in_ln);
+
+
+    /*
+     * Removing
+     * */
+    ln = rm_ln = scols_table_new_line(tb, NULL);
+    scols_line_set_data(ln, COL_NAME, "Removing");
+    scols_line_set_data(ln, COL_VERSION, "");
+    scols_line_set_data(ln, COL_ARCH, "");
+
+    for ( auto it = rm_list.begin(); it != rm_list.end(); it++) {
+        auto map = *it;
+        ln = scols_table_new_line(tb, rm_ln);
+
+        scols_line_set_data(ln, COL_NAME, std::get<std::string>(map["name"]).c_str());
+        scols_line_set_data(ln, COL_VERSION, std::get<std::string>(map["version"]).c_str());
+        scols_line_set_data(ln, COL_ARCH, std::get<std::string>(map["arch"]).c_str());
     }
 
     scols_print_table(tb);
