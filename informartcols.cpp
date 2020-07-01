@@ -8,8 +8,6 @@
 
 #include <libsmartcols.h>
 
-#include "../fork/libdnf/libdnf/utils/smartcols/Table.hpp"
-
 typedef std::map< std::string, std::variant< std::string > > pkgmap;
 typedef std::vector< pkgmap > listpkgmap;
 
