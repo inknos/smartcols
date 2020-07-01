@@ -42,6 +42,69 @@ typedef std::map< std::string, listpkgmap > maplistpkgmap;
  * */
 
 
+struct libscols_line * make_group_line(
+        std::string name,
+        struct libscols_table * tb,
+        struct libscols_line * parent_ln,
+        listpkgmap list, bool newline=false) {
+
+        enum { COL_NAME, COL_VERSION, COL_ARCH };
+
+        auto ln = parent_ln;
+        scols_line_set_data(ln, COL_NAME, name.c_str());
+        scols_line_set_data(ln, COL_VERSION, "");
+        scols_line_set_data(ln, COL_ARCH, "");
+
+        for ( auto it = list.begin(); it != list.end(); it++) {
+            auto map = *it;
+            ln = scols_table_new_line(tb, parent_ln);
+
+            scols_line_set_data(ln, COL_NAME, std::get<std::string>(map["name"]).c_str());
+            scols_line_set_data(ln, COL_VERSION, std::get<std::string>(map["version"]).c_str());
+            scols_line_set_data(ln, COL_ARCH, std::get<std::string>(map["arch"]).c_str());
+        }
+
+        if (newline) {
+            ln = scols_table_new_line(tb, parent_ln);
+        }
+        return ln;
+}
+
+void print_table(maplistpkgmap mlpm) {
+    struct libscols_table * tb;
+    struct libscols_line * in_ln, * rm_ln;
+    struct libscols_symbols * sy = scols_new_symbols();
+    enum { COL_NAME, COL_VERSION, COL_ARCH };
+    setlocale(LC_ALL, "");
+
+    // init table
+    tb = scols_new_table();
+    scols_table_new_column(tb, "Package",      0.4, SCOLS_FL_TREE);
+    scols_table_new_column(tb, "Version",      0.3, SCOLS_FL_WRAP);
+    scols_table_new_column(tb, "Architecture", 0.3, SCOLS_FL_WRAP);
+    scols_table_enable_maxout (tb, 1);
+
+    in_ln = scols_table_new_line(tb, NULL);
+    rm_ln = scols_table_new_line(tb, NULL);
+
+    // init tree symbols
+    scols_symbols_set_branch(sy, "  ");
+    scols_symbols_set_right(sy, "  ");
+    scols_symbols_set_vertical(sy, "");
+    scols_table_set_symbols (tb, sy);
+
+    // split maplist in separate lists
+    // now obj are of type listpkgmap
+    auto in_list = mlpm["install"];
+    auto rm_list = mlpm["remove"];
+
+    make_group_line("Installing", tb, in_ln, in_list, true);
+    make_group_line("Removing",   tb, rm_ln, rm_list);
+
+    scols_print_table(tb);
+    scols_unref_table(tb);
+}
+
 int main() {
     maplistpkgmap mlpm = { //map
         { "install", { //vector
@@ -70,64 +133,6 @@ int main() {
         }}
     };
 
-    struct libscols_table * tb;
-    struct libscols_line  * ln, * in_ln, * rm_ln;
-    struct libscols_symbols * sy = scols_new_symbols ();
-    enum { COL_NAME, COL_VERSION, COL_ARCH };
-    setlocale(LC_ALL, "");
-
-    tb = scols_new_table();
-    scols_table_new_column(tb, "Package",      0.4, SCOLS_FL_TREE);
-    scols_table_new_column(tb, "Version",      0.3, SCOLS_FL_WRAP);
-    scols_table_new_column(tb, "Architecture", 0.3, SCOLS_FL_WRAP);
-    scols_table_enable_maxout (tb, 1);
-    scols_symbols_set_branch(sy, "  ");
-    scols_symbols_set_right(sy, "  ");
-    scols_symbols_set_vertical(sy, "");
-    scols_table_set_symbols (tb, sy);
-
-
-    auto in_list = mlpm["install"];
-    auto rm_list = mlpm["remove"];
-
-    /*
-     * Installing
-     * */
-    ln = in_ln = scols_table_new_line(tb, NULL);
-    scols_line_set_data(ln, COL_NAME, "Installing");
-    scols_line_set_data(ln, COL_VERSION, "");
-    scols_line_set_data(ln, COL_ARCH, "");
-
-    for ( auto it = in_list.begin(); it != in_list.end(); it++) {
-        auto map = *it;
-        ln = scols_table_new_line(tb, in_ln);
-
-        scols_line_set_data(ln, COL_NAME, std::get<std::string>(map["name"]).c_str());
-        scols_line_set_data(ln, COL_VERSION, std::get<std::string>(map["version"]).c_str());
-        scols_line_set_data(ln, COL_ARCH, std::get<std::string>(map["arch"]).c_str());
-    }
-
-    ln = scols_table_new_line(tb, in_ln);
-
-
-    /*
-     * Removing
-     * */
-    ln = rm_ln = scols_table_new_line(tb, NULL);
-    scols_line_set_data(ln, COL_NAME, "Removing");
-    scols_line_set_data(ln, COL_VERSION, "");
-    scols_line_set_data(ln, COL_ARCH, "");
-
-    for ( auto it = rm_list.begin(); it != rm_list.end(); it++) {
-        auto map = *it;
-        ln = scols_table_new_line(tb, rm_ln);
-
-        scols_line_set_data(ln, COL_NAME, std::get<std::string>(map["name"]).c_str());
-        scols_line_set_data(ln, COL_VERSION, std::get<std::string>(map["version"]).c_str());
-        scols_line_set_data(ln, COL_ARCH, std::get<std::string>(map["arch"]).c_str());
-    }
-
-    scols_print_table(tb);
-    scols_unref_table(tb);
+    print_table(mlpm);
 }
 
