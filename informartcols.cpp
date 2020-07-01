@@ -140,7 +140,7 @@ int main() {
         }
     };
 
-    std::cout << "=================" << std::endl;
+    std::cout << "================= using class" << std::endl;
     for ( auto it = listPkgMap.begin(); it != listPkgMap.end(); it++ ) {
         MapToTable mtt;
         auto pkg = *it;
@@ -150,9 +150,9 @@ int main() {
         if ( std::next(it) != listPkgMap.end() ) { std::cout << std::endl; }
     }
 
-    std::cout << "=================" << std::endl;
+    std::cout << "================= using print_table_as_separate" << std::endl;
     print_table_as_separate(listPkgMap);
-    std::cout << "=================" << std::endl;
+    std::cout << "================= using print_table_as_together" << std::endl;
     print_table_as_together(listPkgMap);
     std::cout << "=================" << std::endl;
 }
