@@ -11,6 +11,10 @@
 typedef std::map< std::string, std::variant< std::string > > pkgmap;
 typedef std::vector< pkgmap > listpkgmap;
 
+/*
+ * Compile command
+ * g++ --std=c++17 -O3 -Wall -Wextra -Werror `pkgconf --cflags smartcols` -l smartcols informartcols.cpp
+ * */
 
 class MapToTable {
 private:

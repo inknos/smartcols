@@ -13,6 +13,11 @@ typedef std::vector< pkgmap > listpkgmap;
 typedef std::map< std::string, listpkgmap > maplistpkgmap;
 
 /*
+ * Compile command
+ * g++ --std=c++17 -O3 -Wall -Wextra -Werror `pkgconf --cflags smartcols` -l smartcols transactionsmartcols.cpp
+ * */
+
+/*
  * Transaction table
  * =====================================
  * Package              Architecture  Version
