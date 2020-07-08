@@ -51,12 +51,14 @@ struct libscols_line * make_group_line(
         struct libscols_line * parent_ln,
         listpkgmap list, bool newline=false) {
 
-        enum { COL_NAME, COL_VERSION, COL_ARCH };
+        enum { COL_NAME, COL_VERSION, COL_ARCH, COL_REPO, COL_SIZE };
 
         auto ln = parent_ln;
         scols_line_set_data(ln, COL_NAME, name.c_str());
         scols_line_set_data(ln, COL_VERSION, "");
         scols_line_set_data(ln, COL_ARCH, "");
+        scols_line_set_data(ln, COL_REPO, "");
+        scols_line_set_data(ln, COL_SIZE, "");
 
         for ( auto it = list.begin(); it != list.end(); it++) {
             auto map = *it;
@@ -65,6 +67,8 @@ struct libscols_line * make_group_line(
             scols_line_set_data(ln, COL_NAME, std::get<std::string>(map["name"]).c_str());
             scols_line_set_data(ln, COL_VERSION, std::get<std::string>(map["version"]).c_str());
             scols_line_set_data(ln, COL_ARCH, std::get<std::string>(map["arch"]).c_str());
+            scols_line_set_data(ln, COL_REPO, std::get<std::string>(map["repo"]).c_str());
+            scols_line_set_data(ln, COL_SIZE, std::get<std::string>(map["size"]).c_str());
         }
 
         if (newline) {
@@ -82,18 +86,20 @@ void print_table(maplistpkgmap mlpm) {
 
     // init table
     tb = scols_new_table();
-    scols_table_new_column(tb, "Package",      0.4, SCOLS_FL_TREE);
-    scols_table_new_column(tb, "Version",      0.3, SCOLS_FL_WRAP);
-    scols_table_new_column(tb, "Architecture", 0.3, SCOLS_FL_WRAP);
+    scols_table_new_column(tb, "Package",      0.2, SCOLS_FL_TREE);
+    scols_table_new_column(tb, "Version",      0.2, SCOLS_FL_WRAP);
+    scols_table_new_column(tb, "Arch", 0.2, SCOLS_FL_WRAP);
+    scols_table_new_column(tb, "Repository",   0.2, SCOLS_FL_WRAP);
+    scols_table_new_column(tb, "Size",         0.2, SCOLS_FL_WRAP);
     scols_table_enable_maxout (tb, 1);
 
     in_ln = scols_table_new_line(tb, NULL);
     rm_ln = scols_table_new_line(tb, NULL);
 
     // init tree symbols
-    scols_symbols_set_branch(sy, "  ");
-    scols_symbols_set_right(sy, "  ");
-    scols_symbols_set_vertical(sy, "");
+    scols_symbols_set_branch(sy, " ");
+    scols_symbols_set_right(sy, " ");
+    scols_symbols_set_vertical(sy, " ");
     scols_table_set_symbols (tb, sy);
 
     // split maplist in separate lists
@@ -114,24 +120,35 @@ int main() {
                 { //map
                     { "name", "bash" }, // string, variant
                     { "version", "2.2.2"},
-                    { "arch", "noarch"}
+                    { "arch", "noarch"},
+                    { "repo", "repo1"},
+                    { "size", "50MB" }
                 },
                 {
                     { "name", "wget" },
                     { "version", "2.2.2"},
-                    { "arch", "noarch"}
+                    { "arch", "noarch"},
+                    { "repo", "repo1"},
+                    { "size", "50MB" }
+
                 }
         }},
         {"remove", {
             {
                 { "name", "bash" },
                 { "version", "1.1.1"},
-                { "arch", "noarch"}
+                { "arch", "noarch"},
+                    { "repo", "repo1"},
+                    { "size", "50MB" }
+
             },
             {
                 { "name", "wget" },
                 { "version", "1.1.1"},
-                { "arch", "noarch"}
+                { "arch", "noarch"},
+                    { "repo", "repo1"},
+                    { "size", "50MB" }
+
             }
         }}
     };
