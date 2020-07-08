@@ -88,7 +88,7 @@ void print_table(maplistpkgmap mlpm) {
     tb = scols_new_table();
     scols_table_new_column(tb, "Package",      0.2, SCOLS_FL_TREE);
     scols_table_new_column(tb, "Version",      0.2, SCOLS_FL_WRAP);
-    scols_table_new_column(tb, "Arch", 0.2, SCOLS_FL_WRAP);
+    scols_table_new_column(tb, "Arch",         0.2, SCOLS_FL_WRAP);
     scols_table_new_column(tb, "Repository",   0.2, SCOLS_FL_WRAP);
     scols_table_new_column(tb, "Size",         0.2, SCOLS_FL_WRAP);
     scols_table_enable_maxout (tb, 1);
@@ -138,17 +138,16 @@ int main() {
                 { "name", "bash" },
                 { "version", "1.1.1"},
                 { "arch", "noarch"},
-                    { "repo", "repo1"},
-                    { "size", "50MB" }
+                { "repo", "repo1"},
+                { "size", "50MB" }
 
             },
             {
                 { "name", "wget" },
                 { "version", "1.1.1"},
                 { "arch", "noarch"},
-                    { "repo", "repo1"},
-                    { "size", "50MB" }
-
+                { "repo", "repo1"},
+                { "size", "50MB" }
             }
         }}
     };
